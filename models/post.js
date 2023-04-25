@@ -15,6 +15,9 @@ const postSchema = mongoose.Schema({
   imageUrl: {
     type: String,
   }, 
+  likes: {
+    type: Array,
+  },
   avatarUrl: {
     type: String,
   }, 
