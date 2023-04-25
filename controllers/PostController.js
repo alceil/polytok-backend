@@ -37,12 +37,13 @@ const PostModel = require("../models/post");
   };
 
   const addComment = async (req, res) => {
-    const { id,content,userName,avatarUrl,date} = req.body;
-  
+    const { user } = req;
+    const { id,content} = req.body;
+   const {firstname,lastname,profilePic,username} = user;
     // console.log(req.body)
     try {
       if (id) {
-        const addComment = await PostModel.findByIdAndUpdate(id, { $push:{comments:{content,userName,avatarUrl,date}}});
+        const addComment = await PostModel.findByIdAndUpdate(id, { $push:{comments:{content,firstname,lastname,profilePic,username}}},{ new: true });
         return res.status(200).json(addComment);
       } else {
         return res.status(400).json({ message: "Id not found" });
@@ -72,5 +73,49 @@ tempPost.author = author;
 
   };
 
+   const likePost = async (req, res) => {
+    const { user } = req;
+    const { postId } = req.body;
+    let userId = user._id
+    try {
+      const post = await PostModel.findById(postId);
+      // if (post.likes.includes(userId)) {
+      //   await post.updateOne({ $pull: { likes: userId } });
+      //   res.status(200).json("Post disliked");
+      // } else {
+         await post.updateOne({ $push: { likes: userId } },{ new: true });
+         const temppost = await post.save();
+         console.log(temppost)
+         console.log("like")
+         res.status(200).json({temppost});
+      // }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  };
 
-  module.exports = {getPosts,createPost,deletePost,addComment}
+  const unlikePost = async (req, res) => {
+    const { user } = req;
+    const { postId } = req.body;
+    let userId = user._id
+    try {
+      const post = await PostModel.findById(postId);
+        await post.updateOne({ $pull: { likes: userId } },{ new: true });
+        const temppost = await post.save();
+        res.status(200).json({temppost});
+        console.log(temppost)
+        console.log("unlike")
+        // .then((response)=>{
+        //   res.status(200).json({  message: response  });
+        // })
+        // .catch((err)=>{
+        //   res.status(200).json({  message: err  });
+        // });
+      // }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  };
+
+
+  module.exports = {getPosts,createPost,deletePost,addComment,likePost,unlikePost}
