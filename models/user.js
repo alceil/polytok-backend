@@ -19,6 +19,9 @@ const userSchema = mongoose.Schema({
   profilePic:{
     type: String,
   },
+  bookmarks:{
+type:Array
+  },
   bio:{
     type: String,
   }
