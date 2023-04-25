@@ -133,5 +133,24 @@ const updateUserDetails = async (req, res) => {
   }
 };
 
+const addComment = async (req, res) => {
+  const { user } = req;
+  const { id,content} = req.body;
+ const {firstname,lastname,profilePic,username} = user;
+  // console.log(req.body)
+  try {
+    if (id) {
+      const addComment = await PostModel.findByIdAndUpdate(id, { $push:{comments:{content,firstname,lastname,profilePic,username}}},{ new: true });
+      return res.status(200).json(addComment);
+    } else {
+      return res.status(400).json({ message: "Id not found" });
+    }
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json(error);
+  }
+};
+
+
 
 module.exports = {registerUser,loginUser,resetUser,updateProfilePic,updateUserDetails}  
