@@ -6,7 +6,6 @@ const User = require("../models/user");
  */
 const addUser = async (req, res, next) => {
 const {username} = req.body;
-  
 // Retrieving user from the database
   const user = await User.findOne({ username, verified: true });
 

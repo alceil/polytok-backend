@@ -78,16 +78,10 @@ tempPost.author = author;
     const { postId } = req.body;
     let userId = user._id
     try {
-      const post = await PostModel.findById(postId);
-      // if (post.likes.includes(userId)) {
-      //   await post.updateOne({ $pull: { likes: userId } });
-      //   res.status(200).json("Post disliked");
-      // } else {
-         await post.updateOne({ $push: { likes: userId } },{ new: true });
-         const temppost = await post.save();
-         console.log(temppost)
+      const post = await PostModel.findByIdAndUpdate(postId,{ $addToSet: { likes: userId } },{ new: true });
+         console.log(post)
          console.log("like")
-         res.status(200).json({temppost});
+         res.status(200).json(post);
       // }
     } catch (error) {
       res.status(500).json(error);
@@ -99,19 +93,10 @@ tempPost.author = author;
     const { postId } = req.body;
     let userId = user._id
     try {
-      const post = await PostModel.findById(postId);
-        await post.updateOne({ $pull: { likes: userId } },{ new: true });
-        const temppost = await post.save();
-        res.status(200).json({temppost});
-        console.log(temppost)
+      const post = await PostModel.findByIdAndUpdate(postId,{ $pull: { likes: userId } },{ new: true });
+        console.log(post)
         console.log("unlike")
-        // .then((response)=>{
-        //   res.status(200).json({  message: response  });
-        // })
-        // .catch((err)=>{
-        //   res.status(200).json({  message: err  });
-        // });
-      // }
+        res.status(200).json(post);
     } catch (error) {
       res.status(500).json(error);
     }
