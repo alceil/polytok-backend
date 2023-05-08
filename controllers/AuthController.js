@@ -133,15 +133,17 @@ const updateUserDetails = async (req, res) => {
   }
 };
 
-const addComment = async (req, res) => {
+const bookmarkPost = async (req, res) => {
   const { user } = req;
-  const { id,content} = req.body;
- const {firstname,lastname,profilePic,username} = user;
+  const { postData} = req.body;
+  console.log("Bookmark")
+  console.log(postData)
+ const {_id} = user;
   // console.log(req.body)
   try {
-    if (id) {
-      const addComment = await PostModel.findByIdAndUpdate(id, { $push:{comments:{content,firstname,lastname,profilePic,username}}},{ new: true });
-      return res.status(200).json(addComment);
+    if (_id) {
+      const bookmark = await UserModel.findByIdAndUpdate(_id, { $addToSet:{bookmarks:postData}},{ new: true });
+      return res.status(200).json(bookmark);
     } else {
       return res.status(400).json({ message: "Id not found" });
     }
@@ -151,6 +153,22 @@ const addComment = async (req, res) => {
   }
 };
 
+const unbookmarkPost = async (req, res) => {
+  const { user } = req;
+  const { postId } = req.body;
+  let userId = user._id
+  try {
+    const post = await UserModel.findByIdAndUpdate(userId,{ 
+    $pull: { bookmarks: {_id: postId} } 
+  },{useFindAndModify :false,upsert: true,new: true});
+  //  const temppost   = await post.save();
+   console.log(post)
+
+      res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
 
-module.exports = {registerUser,loginUser,resetUser,updateProfilePic,updateUserDetails}  
+module.exports = {registerUser,loginUser,resetUser,updateProfilePic,updateUserDetails,bookmarkPost,unbookmarkPost}  
