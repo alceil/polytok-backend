@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import User from '../models/user.js';
 import Notification from '../models/notification.js';
-import { sendPushNotification as sendPush } from '../helpers/notification.js';
+// import { sendPushNotification as sendPush } from '../helpers/notification.js';
 
 import {
   validateNumber,
@@ -201,39 +201,39 @@ const createNotification = (
     });
   };
 
-  const sendPushNotification = async (req, res) => {
-    const { master_password, usernames, title, body } = req.body;
+  // const sendPushNotification = async (req, res) => {
+  //   const { master_password, usernames, title, body } = req.body;
 
-    try {
-      validateStringArray(usernames, 4, 15, 'usernames', 1, 100);
-      validateString(title, 3, 50, 'title', true);
-      validateString(body, 3, 150, 'body', true);
-    } catch (err) {
-      return res.badRequest(err.message);
-    }
+  //   try {
+  //     validateStringArray(usernames, 4, 15, 'usernames', 1, 100);
+  //     validateString(title, 3, 50, 'title', true);
+  //     validateString(body, 3, 150, 'body', true);
+  //   } catch (err) {
+  //     return res.badRequest(err.message);
+  //   }
 
-    if (master_password !== process.env.MASTER_PASSWORD) {
-      return res.unAuthorizedRequest('You are not authorized to access this route');
-    }
+  //   if (master_password !== process.env.MASTER_PASSWORD) {
+  //     return res.unAuthorizedRequest('You are not authorized to access this route');
+  //   }
 
-    const query = { push_subscription: { $ne: null } };
-    if (usernames) {
-      query.username = { $in: usernames };
-    }
+  //   const query = { push_subscription: { $ne: null } };
+  //   if (usernames) {
+  //     query.username = { $in: usernames };
+  //   }
 
-    const users = await User.find(query).select('push_subscription').lean();
-    if (users.length === 0) {
-      return res.status(200).json({ msg: 'No user found' });
-    }
+  //   const users = await User.find(query).select('push_subscription').lean();
+  //   if (users.length === 0) {
+  //     return res.status(200).json({ msg: 'No user found' });
+  //   }
 
-    const sendNotificationArray = users.map(({ push_subscription }) =>
-      sendPush(push_subscription, title, body)
-    );
+  //   const sendNotificationArray = users.map(({ push_subscription }) =>
+  //     sendPush(push_subscription, title, body)
+  //   );
 
-    await Promise.allSettled(sendNotificationArray);
+  //   await Promise.allSettled(sendNotificationArray);
 
-    res.status(200).json({ msg: 'All push notifications send successfully' });
-  };
+  //   res.status(200).json({ msg: 'All push notifications send successfully' });
+  // };
 
 
   export {
@@ -245,5 +245,5 @@ const createNotification = (
     markAllAsRead,
     subscribePushNotification,
     unsubscribePushNotification,
-    sendPushNotification
+    // sendPushNotification
   };

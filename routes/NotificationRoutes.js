@@ -7,7 +7,7 @@ import {
   findNotifications,
   deleteNotification,
   getNotificationCount,
-  sendPushNotification,
+  // sendPushNotification,
   subscribePushNotification,
   unsubscribePushNotification,
 } from '../controllers/NotificationController.js';
@@ -15,7 +15,7 @@ import authenticateUser from '../middlewares/authenticate.js';
 
 const notificationRouter = Router();
 
-notificationRouter.post('/send-push', sendPushNotification);
+// notificationRouter.post('/send-push', sendPushNotification);
 notificationRouter.get('/', authenticateUser, findNotifications);
 notificationRouter.delete('/:id', authenticateUser, deleteNotification);
 notificationRouter.get('/count', authenticateUser, getNotificationCount);
